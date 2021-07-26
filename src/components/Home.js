@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 export const Home = () => {
     const [marcadas, setMarcadas] = useState(null);
     const [image, setImage] = useState(null)
+    const [imageReady, setImageReady] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:3001/api/propiedadesMarcadas/', { method: 'GET' })
@@ -12,10 +13,13 @@ export const Home = () => {
 
     const handlerGetImg = (e, imageName) => {
         e.preventDefault();
-        if (marcadas)
+        setImage(true);
+        setImageReady(false);
+        const t = setTimeout(() => { clearTimeout(t); setImageReady(true);}, 500 )
+        if (false)
             fetch(`http://localhost:3001/api/getImage/rekognitionfotos/${imageName}`, { method: 'GET' })
                 .then(res => res.json())
-                .then(res => setImage(res.url))
+                .then(res => { setImage(res.url); });
     }
 
 
@@ -73,6 +77,11 @@ export const Home = () => {
 
     }
 
+    const drawImage = (imgFile) =>  {
+        return <img xmlns="img" className="img-fluid" src={ `http://localhost:3001/api/getImage/rekognitionfotos/${imgFile}?raw` } alt="Propiedad trucha en grande" />
+        //return <img xmlns="img" className="img-fluid" src={imgFile} alt="Foto" />
+
+    }
 
     const handlerImagen = (imagen, marcas, idContainer) => {
         const marcasArray = marcas
@@ -107,10 +116,6 @@ export const Home = () => {
                     minY = c.y
             })
 
-            console.log({minX, minY, maxX, maxY})
-            console.log(cordenadas)
-            console.count()
-            console.log({index});
             return (
                 <div key={index} style={
                     {
@@ -153,9 +158,11 @@ export const Home = () => {
                                 aria-controls="list-home">
                                 <div className="d-flex w-100 justify-content-between">
                                     <span>
-                                        {
-                                            drawRectangle({ width: 60, height: 60, classes: "img-thumbnail" })
-                                        }
+                                        
+                                            {// drawRectangle({ width: 60, height: 60, classes: "img-thumbnail" })}
+                                            }
+                                            <img width="60" height="60" src={ `http://localhost:3001/api/getImage/rekognitionfotos/${m.nombreFoto.S}?raw` } alt="Propiedad trucha"/>
+                                        
                                     </span>
 
                                     <div className="ms-2 me-auto">
@@ -180,8 +187,8 @@ export const Home = () => {
                                 <div className="row">
                                     <div className="col-5 image-container">
                                         <div style={{position:"relative"}}>
-                                            { image && <img xmlns="img" className="img-fluid" src={image} alt="Foto" />}
-                                            { image && handlerImagen(image, m.coincidencia.L, "list-" + m.id.N + "-detail") }
+                                            { image && drawImage(m.nombreFoto.S)}
+                                            { imageReady && handlerImagen(image, m.coincidencia.L, "list-" + m.id.N + "-detail") }
                                         </div>
                                     </div>
                                     <div className="col">
