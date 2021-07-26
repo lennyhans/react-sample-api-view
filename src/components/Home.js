@@ -74,12 +74,22 @@ export const Home = () => {
     }
 
 
-    const handlerImagen = (imagen, marcas) => {
-        const marcasArray = marcas[0].coincidencia.L
-
+    const handlerImagen = (imagen, marcas, idContainer) => {
+        const marcasArray = marcas
+        const container = document.getElementById(idContainer)
+        console.log({container})
+        const imgReference = container.querySelector("img");
+        if(!imgReference)
+            return;
+        
+        console.log({imgReference})
+        const offsetHeigth = imgReference.offsetHeight
+        const offsetWidth = imgReference.offsetWidth
+        console.log({offsetHeigth, offsetWidth})
         let cubos = marcasArray.map((obj, index) => {
-            let cordenadas = obj.M.poligono.L.map(e => { return { x: Math.round(e.M.y.N * 250), y: Math.round(e.M.x.N * 250) } })
+            let cordenadas = obj.M.poligono.L.map(e => { return { x: Math.round(e.M.y.N * offsetHeigth), y: Math.round(e.M.x.N * offsetWidth) } })
             console.log(cordenadas)
+            console.count()
             return (
                 <div key={index} style={
                     {
@@ -88,7 +98,7 @@ export const Home = () => {
                         position: 'absolute',
                         zIndex: '100',
                         borderStyle: 'solid',
-                        border: '3px solid ',
+                        border: '1px solid ',
                         color: `red`
                     }
                 } />
@@ -97,10 +107,9 @@ export const Home = () => {
 
 
         return (
-            <div>
-                <img xmlns="img" src={imagen} alt="Foto" width="250" height="250" />
+            <>
                 {cubos}
-            </div>
+            </>
         )
     }
 
@@ -146,10 +155,11 @@ export const Home = () => {
                         {marcadas && marcadas.map((m, i) => (
                             <div key={i} className="tab-pane fade" id={"list-" + m.id.N + "-detail"} role="tabpanel" aria-labelledby={"list-" + m.id.N}>
                                 <div className="row">
-                                    <div className="col-5">
-                                        {
-                                            image && handlerImagen(image, marcadas)
-                                        }
+                                    <div className="col-5 image-container">
+                                        <div style={{position:"relative"}}>
+                                            { image && <img xmlns="img" className="img-fluid" src={image} alt="Foto" />}
+                                            { image && handlerImagen(image, m.coincidencia.L, "list-" + m.id.N + "-detail") }
+                                        </div>
                                     </div>
                                     <div className="col">
                                         <h4>Inmobiliaria #{i + 1}</h4>
