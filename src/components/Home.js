@@ -77,28 +77,51 @@ export const Home = () => {
     const handlerImagen = (imagen, marcas, idContainer) => {
         const marcasArray = marcas
         const container = document.getElementById(idContainer)
-        console.log({container})
+        
         const imgReference = container.querySelector("img");
         if(!imgReference)
             return;
         
-        console.log({imgReference})
+        
         const offsetHeigth = imgReference.offsetHeight
         const offsetWidth = imgReference.offsetWidth
-        console.log({offsetHeigth, offsetWidth})
+        if(offsetHeigth === 0)
+            return;
+        if(offsetWidth === 0)
+            return;
+        
         let cubos = marcasArray.map((obj, index) => {
             let cordenadas = obj.M.poligono.L.map(e => { return { x: Math.round(e.M.y.N * offsetHeigth), y: Math.round(e.M.x.N * offsetWidth) } })
+            let minX = Number.MAX_SAFE_INTEGER;
+            let minY = Number.MAX_SAFE_INTEGER;
+            let maxX = 0;
+            let maxY = 0;
+            cordenadas.forEach( (c) => {
+                if(c.x > maxX)
+                    maxX = c.x
+                if(c.y > maxY)
+                    maxY = c.y
+                if(c.x < minX)
+                    minX = c.x
+                if(c.y < minY)
+                    minY = c.y
+            })
+
+            console.log({minX, minY, maxX, maxY})
             console.log(cordenadas)
             console.count()
+            console.log({index});
             return (
                 <div key={index} style={
                     {
-                        top: `${cordenadas[index].x}px`,
-                        left: `${cordenadas[index].y}px`,
+                        top: `${cordenadas[0].x}px`,
+                        left: `${cordenadas[0].y}px`,
+                        height: `${maxX - minX}px`,
+                        width: `${maxY - minY}px`,
                         position: 'absolute',
                         zIndex: '100',
                         borderStyle: 'solid',
-                        border: '1px solid ',
+                        border: '2px solid ',
                         color: `red`
                     }
                 } />
