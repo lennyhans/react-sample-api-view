@@ -13,7 +13,7 @@ export const Home = () => {
     const handlerGetImg = (e) => {
         e.preventDefault();
         if (marcadas)
-            fetch('http://localhost:3001/api/getImage/rekognitionfotos/1.jpg', { method: 'GET' })
+            fetch('http://localhost:3001/api/getImage/rekognitionfotos/2.jpg', { method: 'GET' })
                 .then(res => res.json())
                 .then(res => setImage(res.url))
     }
@@ -73,10 +73,33 @@ export const Home = () => {
 
     }
 
-    const handlerImagen = (imagen) => {
+
+    const handlerImagen = (imagen, marcas) => {
+        const marcasArray = marcas[0].coincidencia.L
+
+        let cubos = marcasArray.map((obj, index) => {
+            let cordenadas = obj.M.poligono.L.map(e => { return { x: Math.round(e.M.y.N * 250), y: Math.round(e.M.x.N * 250) } })
+            console.log(cordenadas)
+            return (
+                <div key={index} style={
+                    {
+                        top: `${cordenadas[index].x}px`,
+                        left: `${cordenadas[index].y}px`,
+                        position: 'absolute',
+                        zIndex: '100',
+                        borderStyle: 'solid',
+                        border: '3px solid ',
+                        color: `red`
+                    }
+                } />
+            )
+        })
+
+
         return (
-            <div width="250" height="250">
+            <div>
                 <img xmlns="img" src={imagen} alt="Foto" width="250" height="250" />
+                {cubos}
             </div>
         )
     }
@@ -125,7 +148,7 @@ export const Home = () => {
                                 <div className="row">
                                     <div className="col-5">
                                         {
-                                            image && handlerImagen(image)
+                                            image && handlerImagen(image, marcadas)
                                         }
                                     </div>
                                     <div className="col">
