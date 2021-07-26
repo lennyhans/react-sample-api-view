@@ -10,10 +10,10 @@ export const Home = () => {
             .then(json => setMarcadas(json.Items));
     }, []);
 
-    const handlerGetImg = (e) => {
+    const handlerGetImg = (e, imageName) => {
         e.preventDefault();
         if (marcadas)
-            fetch('http://localhost:3001/api/getImage/rekognitionfotos/2.jpg', { method: 'GET' })
+            fetch(`http://localhost:3001/api/getImage/rekognitionfotos/${imageName}`, { method: 'GET' })
                 .then(res => res.json())
                 .then(res => setImage(res.url))
     }
@@ -117,7 +117,7 @@ export const Home = () => {
                                 data-bs-toggle="list"
                                 href={"#list-" + m.id.N + "-detail"}
                                 role="tab"
-                                onClick={handlerGetImg}
+                                onClick={(e) => handlerGetImg(e, m.nombreFoto.S)}
                                 aria-controls="list-home">
                                 <div className="d-flex w-100 justify-content-between">
                                     <span>
